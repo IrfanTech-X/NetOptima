@@ -329,6 +329,52 @@
             </div>
         </div>
     </main>
+
+    <!-- Footer Design -->
+
+    <footer class="bg-black text-gray-300 py-8 animate-fade-in">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col items-center space-y-6">
+      <!-- Contributors -->
+      <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8 text-sm">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zm0-10a1 1 0 00-1 1v4a1 1 0 002 0V7a1 1 0 00-1-1z"/>
+          </svg>
+          <span class="mr-2">Contributor:</span>
+          <a href="https://github.com/IrfanTech-X" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 hover:scale-105 transition-transform duration-200" aria-label="IrfanTech-X GitHub Profile">IrfanTech-X</a>
+        </div>
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zm0-10a1 1 0 00-1 1v4a1 1 0 002 0V7a1 1 0 00-1-1z"/>
+          </svg>
+          <span class="mr-2">Contributor:</span>
+          <a href="https://github.com/MossarrafHossainRobin" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 hover:scale-105 transition-transform duration-200" aria-label="Jane Smith GitHub Profile">MossarrafHossainRobin</a>
+        </div>
+      </div>
+      <!-- Divider -->
+      <div class="w-full border-t border-gray-700"></div>
+      <!-- Copyright Notice -->
+      <div class="text-sm text-gray-300">
+        &copy; <span id="currentYear"></span> NetOptima. All rights reserved.
+      </div>
+    </div>
+  </div>
+</footer>
+<style>
+  .animate-fade-in {
+    animation: fadeIn 1s ease-in;
+  }
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  /* end of Footer design */
+  
+</style>
+<script>
+  document.getElementById('currentYear').textContent = new Date().getFullYear();
+</script>
 <script src="working_function.js"></script>
     </body>
 
