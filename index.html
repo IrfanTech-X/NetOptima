@@ -38,6 +38,20 @@
             background: #f8fafc;
             border-left: 4px solid #3b82f6;
         }
+        .pulse-node {
+            animation: pulse-topology 2s infinite;
+        }
+        @keyframes pulse-topology {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .topology-link {
+            animation: dash-flow 3s linear infinite;
+        }
+        @keyframes dash-flow {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -20; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -94,7 +108,7 @@
             <!-- Bandwidth Card -->
             <div class="metric-card bg-white rounded-lg shadow-sm border p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sm font-medium text-gray-500">Download Speed</h3>
+                    <h3 class="text-sm font-medium text-gray-500">Bandwidth</h3>
                     <svg class="w-5 h-5 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"/>
                     </svg>
@@ -111,9 +125,27 @@
                         <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 001.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z"/>
                     </svg>
                 </div>
-                <div class="text-2xl font-bold text-gray-900" id="connectionType">4G</div>
-                <div class="text-sm text-gray-500 mt-1">Downlink: <span id="downlink">10 Mbps</span></div>
-                <div class="text-xs text-gray-400 mt-1" id="connectionStatus">Stable connection</div>
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Type:</span>
+                        <span class="text-sm font-semibold text-gray-900" id="connectionType">4G</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Downlink:</span>
+                        <span class="text-sm font-semibold text-gray-900" id="downlink">10 Mbps</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">RTT:</span>
+                        <span class="text-sm font-semibold text-gray-900" id="rtt">100ms</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Save Data:</span>
+                        <span class="text-sm font-semibold text-gray-900" id="saveData">Off</span>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-gray-100">
+                    <div class="text-xs text-gray-500" id="connectionStatus">Stable connection</div>
+                </div>
             </div>
         </div>
 
@@ -132,6 +164,90 @@
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Latency Over Time</h3>
                 <div class="h-64">
                     <canvas id="latencyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Speed Tester Section -->
+        <div class="bg-white rounded-lg shadow-sm border p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Speed Tester</h3>
+                <button 
+                    onclick="runSpeedTest()" 
+                    id="speedTestBtn"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                >
+                    Start Test
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Download Speed -->
+                <div class="text-center">
+                    <div class="w-24 h-24 mx-auto mb-4 relative">
+                        <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                            <circle cx="50" cy="50" r="45" stroke="#3b82f6" stroke-width="8" fill="none" 
+                                    stroke-dasharray="283" stroke-dashoffset="283" id="downloadProgress"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-gray-900" id="downloadSpeed">0</div>
+                                <div class="text-xs text-gray-500">Mbps</div>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium text-gray-700">Download</h4>
+                    <p class="text-xs text-gray-500" id="downloadStatus">Ready</p>
+                </div>
+
+                <!-- Upload Speed -->
+                <div class="text-center">
+                    <div class="w-24 h-24 mx-auto mb-4 relative">
+                        <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                            <circle cx="50" cy="50" r="45" stroke="#10b981" stroke-width="8" fill="none" 
+                                    stroke-dasharray="283" stroke-dashoffset="283" id="uploadProgress"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-gray-900" id="uploadSpeed">0</div>
+                                <div class="text-xs text-gray-500">Mbps</div>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium text-gray-700">Upload</h4>
+                    <p class="text-xs text-gray-500" id="uploadStatus">Ready</p>
+                </div>
+
+                <!-- Ping -->
+                <div class="text-center">
+                    <div class="w-24 h-24 mx-auto mb-4 relative">
+                        <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                            <circle cx="50" cy="50" r="45" stroke="#f59e0b" stroke-width="8" fill="none" 
+                                    stroke-dasharray="283" stroke-dashoffset="283" id="pingProgress"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-gray-900" id="pingSpeed">0</div>
+                                <div class="text-xs text-gray-500">ms</div>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium text-gray-700">Ping</h4>
+                    <p class="text-xs text-gray-500" id="pingStatus">Ready</p>
+                </div>
+            </div>
+
+            <!-- Test Progress Bar -->
+            <div class="mt-6">
+                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                    <span id="testPhase">Ready to start</span>
+                    <span id="testProgress">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%" id="overallProgress"></div>
                 </div>
             </div>
         </div>
@@ -185,8 +301,9 @@
 
         <!-- Network Topology Visualization -->
         <div class="bg-white rounded-lg shadow-sm border p-6 mb-8">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Network Topology</h3>
-            <div id="networkTopology" class="w-full h-64 border border-gray-200 rounded-lg"></div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Network Path Visualization</h3>
+            <p class="text-sm text-gray-600 mb-4">Shows the actual path your data takes from your device to the internet</p>
+            <div id="networkTopology" class="w-full h-96 border border-gray-200 rounded-lg relative"></div>
         </div>
 
         <!-- Network Details Table -->
